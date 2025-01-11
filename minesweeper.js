@@ -4,8 +4,8 @@ const SCREEN = {
 };
 
 const GRID_COUNT = {
-    WIDTH   : 20,
-    HEIGHT  : 20,
+    WIDTH   : 10,
+    HEIGHT  : 10,
 };
 
 const numberColor = [
@@ -142,7 +142,7 @@ window.onload = () =>
         grid[gridPosition.x][gridPosition.y].Flag();
     }); 
 
-    let bombCount = Math.floor(0.2 * GRID_COUNT.WIDTH * GRID_COUNT.HEIGHT);
+    let bombCount = Math.floor(0.1 * GRID_COUNT.WIDTH * GRID_COUNT.HEIGHT);
 
     for (let i = 0; i < bombCount; i++)
     {
@@ -261,7 +261,21 @@ window.onload = () =>
         }
     }
 
+    function checkWinningCondition()
+    {
+        for (let x = 0; x < GRID_COUNT.WIDTH; x++)
+        {
+            for (let y = 0; y < GRID_COUNT.HEIGHT; y++)
+            {
+                if (!grid[x][y].isOpened && !grid[x][y].isBomb)
+                    return;
+            }
+        }
+        alert("You Won!");
+    }
+
     setInterval(() => {
+        checkWinningCondition();
 
         ctx.fillStyle = "white";
         ctx.fillRect(0, 0, SCREEN.WIDTH, SCREEN.HEIGHT);
@@ -271,7 +285,6 @@ window.onload = () =>
         drawNumbers();
 
         drawCover();
-
     }, 20);
 }
 
