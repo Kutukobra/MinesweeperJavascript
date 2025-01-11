@@ -61,6 +61,12 @@ window.onload = () =>
             this.isOpened = false;
             this.isBomb = false;
             this.bombCount = 0;
+            this.isFlagged = false;
+        }
+
+        Flag()
+        {
+            this.isFlagged = !this.isFlagged;
         }
     };
     
@@ -77,7 +83,21 @@ window.onload = () =>
     function revealGrid(x, y)
     {
         grid[x][y].isOpened = true;
-        
+
+        if (grid[x][y].isBomb)
+        {
+            for (let x = 0; x < GRID_COUNT.WIDTH; x++)
+            {
+                for (let y = 0; y < GRID_COUNT.HEIGHT; y++)
+                {
+                    if (grid[x][y].isBomb)
+                        grid[x][y].isOpened = true;
+                }
+            }
+
+            alert("Game Over");
+        }
+
         if (grid[x][y].bombCount != 0)
             return;
 
@@ -100,12 +120,26 @@ window.onload = () =>
 
     // Mouse on click.
     canv.addEventListener("mousedown", (event) => {
+        if (event.button != 0)
+            return;
+
+
+        let gridPosition = {
+            x : Math.floor(mousePosition.x / GRID_SIZE.WIDTH),
+            y : Math.floor(mousePosition.y / GRID_SIZE.HEIGHT)
+        };
+        revealGrid(gridPosition.x, gridPosition.y);
+    }); 
+
+    canv.addEventListener("contextmenu", (event) => {
+        event.preventDefault();
+
         let gridPosition = {
             x : Math.floor(mousePosition.x / GRID_SIZE.WIDTH),
             y : Math.floor(mousePosition.y / GRID_SIZE.HEIGHT)
         };
 
-        revealGrid(gridPosition.x, gridPosition.y);
+        grid[gridPosition.x][gridPosition.y].Flag();
     }); 
 
     let bombCount = Math.floor(0.2 * GRID_COUNT.WIDTH * GRID_COUNT.HEIGHT);
@@ -217,6 +251,12 @@ window.onload = () =>
                 }
 
                 ctx.fillRect(position.x + 0.5, position.y + 0.5, GRID_SIZE.WIDTH - 1, GRID_SIZE.HEIGHT - 1);
+
+                if (grid[x][y].isFlagged)
+                {
+                    ctx.fillStyle = "orange";
+                    ctx.fillText("F", position.x + 8  , position.y + GRID_SIZE.HEIGHT - 5, GRID_SIZE.WIDTH - 2);
+                }
             }
         }
     }
