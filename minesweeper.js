@@ -74,6 +74,30 @@ window.onload = () =>
         }
     }
 
+    function revealGrid(x, y)
+    {
+        grid[x][y].isOpened = true;
+        
+        if (grid[x][y].bombCount != 0)
+            return;
+
+        for (const direction of directions)
+        {
+            let check = {
+                x : x + direction.x,
+                y : y + direction.y
+            };
+
+            if (check.x < 0 || check.x >= GRID_COUNT.WIDTH || check.y < 0 || check.y >= GRID_COUNT.HEIGHT)
+                continue;
+
+            if (grid[check.x][check.y].isOpened == false && grid[check.x][check.y].isBomb == false)
+            {
+                revealGrid(check.x, check.y);
+            }
+        }
+    }
+
     // Mouse on click.
     canv.addEventListener("mousedown", (event) => {
         let gridPosition = {
@@ -81,7 +105,7 @@ window.onload = () =>
             y : Math.floor(mousePosition.y / GRID_SIZE.HEIGHT)
         };
 
-        grid[gridPosition.x][gridPosition.y].isOpened = true;
+        revealGrid(gridPosition.x, gridPosition.y);
     }); 
 
     let bombCount = Math.floor(0.2 * GRID_COUNT.WIDTH * GRID_COUNT.HEIGHT);
