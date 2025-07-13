@@ -4,8 +4,8 @@ const SCREEN = {
 };
 
 const GRID_COUNT = {
-    WIDTH   : 10,
-    HEIGHT  : 10,
+    WIDTH   : 20,
+    HEIGHT  : 20,
 };
 
 const numberColor = [
@@ -25,6 +25,8 @@ window.onload = () =>
     let canv = document.getElementById("cnv");
     canv.height = SCREEN.HEIGHT;
     canv.width  = SCREEN.WIDTH;
+
+    let isStarted = false;
 
     let mousePosition = {};
 
@@ -255,7 +257,7 @@ window.onload = () =>
                 if (grid[x][y].isFlagged)
                 {
                     ctx.fillStyle = "orange";
-                    ctx.fillText("F", position.x + 8  , position.y + GRID_SIZE.HEIGHT - 5, GRID_SIZE.WIDTH - 2);
+                    ctx.fillText("X", position.x + 8  , position.y + GRID_SIZE.HEIGHT - 5, GRID_SIZE.WIDTH - 2);
                 }
             }
         }
