@@ -46,6 +46,7 @@ window.onload = () =>
         HEIGHT : SCREEN.HEIGHT / GRID_COUNT.HEIGHT
     };
 
+    // Array of directions for flexibility
     const directions = [
         {x : 0, y : 1},
         {x : -1, y : 1},
@@ -57,6 +58,7 @@ window.onload = () =>
         {x : 1, y : 1}
     ];
 
+    // One single grid square class
     class Grid {
         constructor()
         {
@@ -72,6 +74,7 @@ window.onload = () =>
         }
     };
     
+    // Fills entire grid array
     let grid = new Array(GRID_COUNT.WIDTH);
     for (let x = 0; x < GRID_COUNT.HEIGHT; x++)
     {
@@ -82,22 +85,28 @@ window.onload = () =>
         }
     }
 
+    function gameOver() 
+    {
+        for (let x = 0; x < GRID_COUNT.WIDTH; x++)
+        {
+            for (let y = 0; y < GRID_COUNT.HEIGHT; y++)
+            {
+                if (grid[x][y].isBomb)
+                    grid[x][y].isOpened = true;
+            }
+        }
+
+        alert("Game Over");
+    }
+
     function revealGrid(x, y)
     {
         grid[x][y].isOpened = true;
 
         if (grid[x][y].isBomb)
         {
-            for (let x = 0; x < GRID_COUNT.WIDTH; x++)
-            {
-                for (let y = 0; y < GRID_COUNT.HEIGHT; y++)
-                {
-                    if (grid[x][y].isBomb)
-                        grid[x][y].isOpened = true;
-                }
-            }
-
-            alert("Game Over");
+            gameOver();
+            return;
         }
 
         if (grid[x][y].bombCount != 0)
@@ -144,16 +153,23 @@ window.onload = () =>
         grid[gridPosition.x][gridPosition.y].Flag();
     }); 
 
-    let bombCount = Math.floor(0.1 * GRID_COUNT.WIDTH * GRID_COUNT.HEIGHT);
+    let bombCount = Math.floor(0.1 * GRID_COUNT.WIDTH * GRID_COUNT.HEIGHT); // 10% of the grid are bombs
 
     for (let i = 0; i < bombCount; i++)
     {
         let x = Math.floor(Math.random() * GRID_COUNT.WIDTH);
         let y = Math.floor(Math.random() * GRID_COUNT.HEIGHT);
 
+        if (grid[x][y].isBomb) // If random position is already a bomb, do over to make sure consistent bomb count
+        {
+            i--;
+            continue;
+        }
+
         grid[x][y].isBomb = true;
     }
 
+    // Adjacent bomb counter
     for (let x = 0; x < GRID_COUNT.WIDTH; x++)
     {
         for (let y = 0; y < GRID_COUNT.HEIGHT; y++)
@@ -174,6 +190,7 @@ window.onload = () =>
         }
     }
     
+    // Checks whether current mouse coordinate is in a grid
     function mouseInside(position)
     {
         return mousePosition.x >= position.x + 0.5 
@@ -182,6 +199,7 @@ window.onload = () =>
                     && mousePosition.y <= position.y + GRID_SIZE.HEIGHT - 0.5
     }
 
+    // Draws grid manually
     function drawGrid()
     {
         ctx.fillStyle = "black";
@@ -229,6 +247,7 @@ window.onload = () =>
         }
     }
 
+    // Cover layer to cover up bombs and numbers.
     function drawCover()
     {
         for (let x = 0; x < GRID_COUNT.WIDTH; x++)
@@ -276,6 +295,8 @@ window.onload = () =>
         alert("You Won!");
     }
 
+
+    // Gameplay loop
     setInterval(() => {
         checkWinningCondition();
 
